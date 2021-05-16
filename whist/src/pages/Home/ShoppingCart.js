@@ -2,12 +2,10 @@ import Box from '@material-ui/core/Box'
 import { Button } from '@material-ui/core'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import Paper from '@material-ui/core/Paper';
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Popper from '@material-ui/core/Popper';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import OrderService from '../../services/OrderService';
+import { postOrder } from '../../services/OrderService';
 import ProductSummary from './ProductSummary';
 
 
@@ -25,31 +23,35 @@ const ShoppingCart = ({ chosenItems, handlePay }) => {
     const handleClick = (event) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
     };
-    const postOrder = OrderService();
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popper' : undefined;
 
     const [summarizedItems, setSummarizedItems] = useState({});
     useEffect(() => {
         if (chosenItems.length > 0) {
-            chosenItems.map((item) => {
+            const newSummaryItems = {};
+            chosenItems.forEach((item) => {
+                const id = item.id;
                 const title = item.title;
                 const price = item.price;
-                const url = item.url;
-                const summrizedTitles = Object.keys(summarizedItems);
-                if (summrizedTitles.includes(title)) {
-                    const quantity = summarizedItems[title].quantity + 1;
-                    const tempObject = {
-                        ...(summarizedItems[title]), quantity: quantity
-                    };
-                    setSummarizedItems({ ...summarizedItems, [title]: tempObject })
-                }
-                else {
-                    setSummarizedItems({ ...summarizedItems, [title]: { 'url': url, 'title': title, 'quantity': 1, 'price': price } })
+                if (newSummaryItems[id]) {
+                    newSummaryItems[id].quantity += 1;
+                } else {
+                    newSummaryItems[id] = { title, quantity: 1, price };
                 }
             });
+            setSummarizedItems(newSummaryItems);
         }
     }, [chosenItems]);
+    const pay = useCallback(async () => {
+        const order = Object.entries(summarizedItems).reduce((o, [id, item]) => {
+            o[id] = item.quantity;
+            return o;
+        }, {});
+        await postOrder(order);
+        handlePay();
+        setSummarizedItems({});
+    }, [summarizedItems, handlePay])
 
     return (
         <Box left='80%'
@@ -59,11 +61,7 @@ const ShoppingCart = ({ chosenItems, handlePay }) => {
                 <ShoppingCartIcon />{'Shopping cart '}
             </Button>
             <Popper id={id} open={open} anchorEl={anchorEl}>
-                <Paper>{Object.keys(summarizedItems).length > 0 ? <ProductSummary summarizedItems={summarizedItems} handlePay={() => {
-                    postOrder(summarizedItems);
-                    handlePay();
-                    setSummarizedItems({})
-                }} /> : ''}
+                <Paper>{Object.keys(summarizedItems).length > 0 ? <ProductSummary summarizedItems={summarizedItems} handlePay={pay} /> : ''}
                 </Paper>
             </Popper>
         </Box>

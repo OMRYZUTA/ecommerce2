@@ -4,10 +4,8 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
-import useCalculateSum from './CalculateSum'
 
 const useStyles = makeStyles({
     root: {
@@ -28,25 +26,29 @@ const useStyles = makeStyles({
 
 const ProductSummary = ({ summarizedItems, handlePay }) => {
     const classes = useStyles();
-    const sum = useCalculateSum(summarizedItems);
+    const sum = Object.values(summarizedItems).reduce((r, item) => {
+        return r + item.price * item.quantity;
+    }, 0);
 
     return (
         <Card className={classes.root} variant="outlined">
             <CardContent>
-                {Object.keys(summarizedItems).map((title) => {
+                {Object.values(summarizedItems).map((item) => {
+                    const title = item.title;
+                    const price = item.price;
+                    const quantity = item.quantity;
                     return (
                         <Grid container key={title} justify='space-between'>
                             <Box component="div" display="inline" p={1} m={1} >
                                 {title}
                             </Box>
                             <Box component="div" display="inline" p={1} m={1} justifyContent="center" >
-                                ${summarizedItems[title].price}
+                                ${price}
                             </Box>
                             <Box component="div" display="inline" p={1} m={1} >
-                                {summarizedItems[title].quantity}
+                                {quantity}
                             </Box>
                         </Grid>
-
                     )
                 })}
                 <Grid container justify='space-between' display="flex">

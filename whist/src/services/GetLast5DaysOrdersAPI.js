@@ -5,7 +5,7 @@ const GetLast5DaysOrdersAPI = () => {
     useEffect(() => {
         const fetchItems = async () => {
             const result = await axios(
-                'http://127.0.0.1:8000/last5daysorders/',
+                '/last5daysorders/',
             );
 
             setOrders(result.data);

@@ -10,7 +10,7 @@ const ItemService = () => {
             const putCallback = async () => {
                 await axios({
                     method: 'PUT', url:
-                        `http://127.0.0.1:8000/items/${props.id}/`, data: props
+                        `/items/${props.id}/`, data: props
                 });
             };
 
@@ -22,7 +22,7 @@ const ItemService = () => {
             const postCallback = async () => {
                 await axios({
                     method: 'post', url:
-                        'http://127.0.0.1:8000/items/', data: props
+                        '/items/', data: props
                 }
                 );
             };
@@ -34,7 +34,7 @@ const ItemService = () => {
             const deleteCallback = async () => {
                 await axios({
                     method: 'DELETE', url:
-                        `http://127.0.0.1:8000/items/${props.id}/`, data: props
+                        `/items/${props.id}/`, data: props
                 });
             };
 

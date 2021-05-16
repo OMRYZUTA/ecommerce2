@@ -17,6 +17,7 @@ const useStyles = makeStyles({
     },
 });
 const ProductCard = ({ item, handleBuyClick, }) => {
+    const onclick = function() { handleBuyClick(item) };
     const classes = useStyles();
     return (
         <Card className={classes.root}>
@@ -40,9 +41,9 @@ const ProductCard = ({ item, handleBuyClick, }) => {
                 </CardContent>
             </CardActionArea>
             <CardActions>
-                <Button size="small" color="primary" onClick={() => { handleBuyClick(item) }}>
+                <Button size="small" color="primary" onClick={onclick}>
                     Buy
-        </Button>
+                </Button>
             </CardActions>
         </Card>
     )

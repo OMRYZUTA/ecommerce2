@@ -5,7 +5,7 @@ const GetTop5UniqueSelAPI = () => {
     useEffect(() => {
         const fetchItems = async () => {
             const result = await axios(
-                'http://127.0.0.1:8000/top5uniquesel/',
+                '/top5uniquesel/',
             );
             setItems(result.data);
 
